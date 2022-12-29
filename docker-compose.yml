@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    environment:
+      - POSTGRES_USERNAME=user
+      - POSTGRES_PASSWORD=HardPass 
+      - POSTGRES_DB=db
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    networks:
+      - default
+    volumes:
+      - postgres:/data/database
+    restart: unless-stopped
+  app:
+    container_name: app
+    build: .
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USERNAME=user
+      - POSTGRES_PASSWORD=HardPass 
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+
+networks:
+  default:
+
+volumes:
+  postgres:

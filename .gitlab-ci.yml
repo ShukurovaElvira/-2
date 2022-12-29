@@ -1,0 +1,23 @@
+stages:
+  - build
+  - start
+
+docker-build:
+  rules:
+    - if: $CI_BUILD_REF_NAME == "master" || $CI_BUILD_REF_NAME == "dev"
+      when: on_success
+    - when: never
+  stage: build
+  interruptible: true
+  script:
+    - docker build . -t app:latest
+
+start:
+  stage: start
+  interruptible: true
+  script:
+    - cd ~/$CI_PROJECT_NAME/
+    - docker-compose up -d
+  artifacts:
+    paths:
+      - ./output.json
